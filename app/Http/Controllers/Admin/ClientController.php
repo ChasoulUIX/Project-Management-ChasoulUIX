@@ -4,14 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
     public function index()
     {
-        $clients = Client::withCount('projects')->latest()->paginate(10);
-        return view('admin.clients.index', compact('clients'));
+        $clients = Client::withCount('projects')
+            ->with(['projects' => function($query) {
+                $query->latest()->take(2);
+            }])
+            ->latest()
+            ->paginate(9);
+
+        $totalProjects = Project::count();
+        $totalValue = Project::sum('price');
+
+        return view('admin.clients.index', compact('clients', 'totalProjects', 'totalValue'));
     }
 
     public function create()

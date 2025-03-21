@@ -11,7 +11,7 @@
     <div class="bg-dark-secondary rounded-2xl border border-gray-700/50">
         <div class="p-6 border-b border-gray-700/50">
             <h2 class="text-2xl font-semibold">Add Team Member</h2>
-            <p class="text-gray-400 mt-1">Add a new team member to the project</p>
+            <p class="text-gray-400 mt-1">Create a new team member</p>
         </div>
 
         <form action="{{ route('admin.teams.store') }}" 
@@ -24,14 +24,20 @@
                 <label for="name" class="block text-sm font-medium text-gray-300">
                     Name <span class="text-red-500">*</span>
                 </label>
-                <input type="text" 
-                       name="name" 
-                       id="name" 
-                       value="{{ old('name') }}"
-                       class="w-full px-4 py-2.5 bg-dark-primary border border-gray-700 rounded-lg
-                              focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
-                              text-gray-100"
-                       required>
+                <div class="relative">
+                    <input type="text" 
+                           name="name" 
+                           id="name" 
+                           value="{{ old('name') }}"
+                           class="w-full pl-10 pr-4 py-2.5 bg-dark-primary border border-gray-700 rounded-lg
+                                  focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
+                                  text-gray-100"
+                           placeholder="Enter team member name"
+                           required>
+                    <span class="absolute left-3 top-2.5 text-gray-500">
+                        <i class="ri-user-line"></i>
+                    </span>
+                </div>
                 @error('name')
                     <p class="text-sm text-red-500">{{ $message }}</p>
                 @enderror
@@ -65,15 +71,13 @@
                     Project <span class="text-red-500">*</span>
                 </label>
                 <select name="project_id" 
-                        id="project_id" 
+                        id="project_id"
                         class="w-full px-4 py-2.5 bg-dark-primary border border-gray-700 rounded-lg
                                focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
-                               text-gray-100"
-                        required>
+                               text-gray-100">
                     <option value="">Select Project</option>
                     @foreach($projects as $project)
-                        <option value="{{ $project->id }}" 
-                                {{ old('project_id') == $project->id ? 'selected' : '' }}>
+                        <option value="{{ $project->id }}" {{ old('project_id') == $project->id ? 'selected' : '' }}>
                             {{ $project->name }}
                         </option>
                     @endforeach
@@ -85,20 +89,25 @@
 
             <!-- Salary -->
             <div class="space-y-2">
-                <label for="salary" class="block text-sm font-medium text-gray-300">
-                    Salary (Rp) <span class="text-red-500">*</span>
+                <label for="display_salary" class="block text-sm font-medium text-gray-300">
+                    Salary <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
                     <span class="absolute left-4 top-2.5 text-gray-500">Rp</span>
-                    <input type="number" 
-                           name="salary" 
-                           id="salary" 
-                           value="{{ old('salary') }}"
+                    <input type="text" 
+                           id="display_salary" 
                            class="w-full pl-12 pr-4 py-2.5 bg-dark-primary border border-gray-700 rounded-lg
                                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
                                   text-gray-100"
+                           placeholder="1.000.000"
+                           value="{{ old('salary') ? number_format(old('salary'), 0, ',', '.') : '' }}"
                            required>
+                    <input type="hidden" 
+                           name="salary" 
+                           id="actual_salary" 
+                           value="{{ old('salary') }}">
                 </div>
+                <p class="text-xs text-gray-400">Enter amount in Rupiah (IDR)</p>
                 @error('salary')
                     <p class="text-sm text-red-500">{{ $message }}</p>
                 @enderror
@@ -106,13 +115,16 @@
 
             <!-- Notes -->
             <div class="space-y-2">
-                <label for="notes" class="block text-sm font-medium text-gray-300">Notes</label>
+                <label for="notes" class="block text-sm font-medium text-gray-300">
+                    Notes
+                </label>
                 <textarea name="notes" 
-                          id="notes" 
-                          rows="3"
+                          id="notes"
                           class="w-full px-4 py-2.5 bg-dark-primary border border-gray-700 rounded-lg
                                  focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
-                                 text-gray-100">{{ old('notes') }}</textarea>
+                                 text-gray-100"
+                          rows="4"
+                          placeholder="Add any additional notes here">{{ old('notes') }}</textarea>
                 @error('notes')
                     <p class="text-sm text-red-500">{{ $message }}</p>
                 @enderror
@@ -141,4 +153,47 @@
     {{ session('success') }}
 </div>
 @endif
-@endsection 
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const displaySalary = document.getElementById('display_salary');
+    const actualSalary = document.getElementById('actual_salary');
+
+    // Format awal jika ada old value
+    if (displaySalary.value) {
+        formatSalary(displaySalary.value);
+    }
+
+    displaySalary.addEventListener('input', function(e) {
+        // Hapus semua karakter non-digit
+        let value = e.target.value.replace(/\D/g, '');
+        
+        // Format number dengan thousand separator
+        formatSalary(value);
+    });
+
+    function formatSalary(value) {
+        // Simpan nilai asli ke hidden input
+        actualSalary.value = value;
+
+        // Format untuk display
+        if (value === '') {
+            displaySalary.value = '';
+        } else {
+            // Format dengan thousand separator
+            displaySalary.value = new Intl.NumberFormat('id-ID').format(value);
+        }
+    }
+
+    // Validasi form sebelum submit
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (actualSalary.value === '') {
+            e.preventDefault();
+            alert('Please enter a valid salary amount');
+        }
+    });
+});
+</script>
+@endpush
+@endsection

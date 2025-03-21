@@ -8,11 +8,7 @@ class Team extends Model
 {
     protected $fillable = [
         'name',
-        'whatsapp',
-        'project_id',
-        'salary',
-        'status',
-        'notes'
+        'whatsapp'
     ];
     
     protected $casts = [
@@ -22,6 +18,13 @@ class Team extends Model
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class)
+                    ->withPivot('salary', 'status', 'payment_date')
+                    ->withTimestamps();
     }
 
     public function getStatusColorClass()

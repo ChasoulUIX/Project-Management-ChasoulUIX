@@ -4,49 +4,15 @@
 <div class="space-y-8">
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Projects -->
-        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                    <i class="ri-folder-line text-2xl text-blue-500"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-400">Total Projects</p>
-                    <h3 class="text-2xl font-bold">{{ \App\Models\Project::count() }}</h3>
-                </div>
-            </div>
-            <div class="mt-4 flex items-center gap-2 text-gray-400">
-                <i class="ri-file-list-line"></i>
-                <span class="text-sm">All time projects</span>
-            </div>
-        </div>
-
-        <!-- Active Projects -->
-        <!-- <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-green-500/50 transition-all duration-300">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
-                    <i class="ri-time-line text-2xl text-green-500"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-400">Active Projects</p>
-                    <h3 class="text-2xl font-bold">{{ \App\Models\Project::where('status', 'process')->count() }}</h3>
-                </div>
-            </div>
-            <div class="mt-4 flex items-center gap-2 text-green-500">
-                <i class="ri-arrow-right-circle-line"></i>
-                <span class="text-sm">In progress</span>
-            </div>
-        </div> -->
-
-        <!-- Total Income -->
-        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300">
+      <!-- Total Income -->
+      <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
                     <i class="ri-money-dollar-circle-line text-2xl text-purple-500"></i>
                 </div>
                 <div>
                     <p class="text-sm text-gray-400">Total Income</p>
-                    <h3 class="text-2xl font-bold">Rp {{ number_format(\App\Models\Payment::sum('amount'), 0, ',', '.') }}</h3>
+                    <h3 class="text-2xl font-bold">Rp {{ number_format($totalIncome, 0, ',', '.') }}</h3>
                 </div>
             </div>
             <div class="mt-4 flex items-center gap-2 text-purple-500">
@@ -55,54 +21,55 @@
             </div>
         </div>
 
-        <!-- Pending Projects -->
-        <!-- <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-yellow-500/50 transition-all duration-300">
+        <!-- Net Profit -->
+        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-green-500/50 transition-all duration-300">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center">
-                    <i class="ri-timer-line text-2xl text-yellow-500"></i>
+                <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                    <i class="ri-line-chart-line text-2xl text-green-500"></i>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-400">Pending Projects</p>
-                    <h3 class="text-2xl font-bold">{{ \App\Models\Project::where('status', 'pending')->count() }}</h3>
+                    <p class="text-sm text-gray-400">Net Profit</p>
+                    <h3 class="text-2xl font-bold">Rp {{ number_format($netProfit, 0, ',', '.') }}</h3>
                 </div>
             </div>
-            <div class="mt-4 flex items-center gap-2 text-yellow-500">
-                <i class="ri-hourglass-line"></i>
-                <span class="text-sm">Awaiting action</span>
-            </div>
-        </div> -->
-
-        <!-- Team Expenses -->
-        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-indigo-500/50 transition-all duration-300">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center">
-                    <i class="ri-team-line text-2xl text-indigo-500"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-400">Team Expenses</p>
-                    <h3 class="text-2xl font-bold">Rp {{ number_format(\App\Models\Team::where('status', 'paid')->sum('salary'), 0, ',', '.') }}</h3>
-                </div>
-            </div>
-            <div class="mt-4 flex items-center gap-2 text-indigo-500">
-                <i class="ri-group-line"></i>
-                <span class="text-sm">{{ \App\Models\Team::count() }} team members</span>
+            <div class="mt-4 flex items-center gap-2 {{ $netProfit >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                <i class="ri-arrow-{{ $netProfit >= 0 ? 'up' : 'down' }}-line"></i>
+                <span class="text-sm">{{ $netProfit >= 0 ? 'Profit' : 'Loss' }} after team expenses</span>
             </div>
         </div>
 
-        <!-- Total Clients -->
-        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-pink-500/50 transition-all duration-300">
+
+        <!-- Team Expenses -->
+        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-red-500/50 transition-all duration-300">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-pink-500/10 rounded-xl flex items-center justify-center">
-                    <i class="ri-user-star-line text-2xl text-pink-500"></i>
+                <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+                    <i class="ri-team-line text-2xl text-red-500"></i>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-400">Total Clients</p>
-                    <h3 class="text-2xl font-bold">{{ \App\Models\Client::count() }}</h3>
+                    <p class="text-sm text-gray-400">Team Expenses</p>
+                    <h3 class="text-2xl font-bold">Rp {{ number_format($totalTeamExpenses, 0, ',', '.') }}</h3>
                 </div>
             </div>
-            <div class="mt-4 flex items-center gap-2 text-pink-500">
-                <i class="ri-group-line"></i>
-                <span class="text-sm">Active clients</span>
+            <div class="mt-4 flex items-center gap-2 text-red-500">
+                <i class="ri-money-dollar-circle-line"></i>
+                <span class="text-sm">Total team payments</span>
+            </div>
+        </div>
+
+        <!-- Outstanding Payments -->
+        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-yellow-500/50 transition-all duration-300">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center">
+                    <i class="ri-funds-line text-2xl text-yellow-500"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Outstanding Payments</p>
+                    <h3 class="text-2xl font-bold">Rp {{ number_format($outstandingPayments, 0, ',', '.') }}</h3>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-yellow-500">
+                <i class="ri-time-line"></i>
+                <span class="text-sm">Remaining unpaid project values</span>
             </div>
         </div>
     </div>
@@ -152,25 +119,35 @@
                 <h2 class="text-xl font-semibold">Recent Payments</h2>
             </div>
             <div class="p-6 space-y-4">
-                @foreach(\App\Models\Payment::with('project')->latest()->take(5)->get() as $payment)
-                <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                            <i class="ri-money-dollar-circle-line text-green-500"></i>
+                @foreach(\App\Models\Payment::with(['project' => function($query) {
+                    $query->where('status', '!=', 'cancel');
+                }])
+                ->whereHas('project', function($query) {
+                    $query->where('status', '!=', 'cancel');
+                })
+                ->latest()
+                ->take(5)
+                ->get() as $payment)
+                    @if($payment->project)
+                    <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                                <i class="ri-money-dollar-circle-line text-green-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium">{{ $payment->project->name }}</h3>
+                                <p class="text-sm text-gray-400">
+                                    {{ $payment->payment_method }} • {{ $payment->payment_date->format('d M Y') }}
+                                </p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-medium">{{ $payment->project->name }}</h3>
-                            <p class="text-sm text-gray-400">
-                                {{ $payment->payment_method }} • {{ $payment->payment_date->format('d M Y') }}
+                        <div class="text-right">
+                            <p class="font-medium text-green-500">
+                                Rp {{ number_format($payment->amount, 0, ',', '.') }}
                             </p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="font-medium text-green-500">
-                            Rp {{ number_format($payment->amount, 0, ',', '.') }}
-                        </p>
-                    </div>
-                </div>
+                    @endif
                 @endforeach
             </div>
         </div>

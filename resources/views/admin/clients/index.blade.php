@@ -10,6 +10,45 @@
         </a>
     </div>
 
+    <!-- Client Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50 p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                    <i class="ri-user-line text-2xl text-blue-500"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Total Clients</p>
+                    <h3 class="text-2xl font-bold">{{ $clients->count() }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50 p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                    <i class="ri-folder-line text-2xl text-green-500"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Total Projects</p>
+                    <h3 class="text-2xl font-bold">{{ $totalProjects }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50 p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center">
+                    <i class="ri-money-dollar-circle-line text-2xl text-yellow-500"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Total Value</p>
+                    <h3 class="text-2xl font-bold">Rp {{ number_format($totalValue, 0, ',', '.') }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Clients Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach($clients as $client)
@@ -60,6 +99,33 @@
                         <p class="text-lg font-semibold">Rp {{ number_format($client->total_payments, 0, ',', '.') }}</p>
                     </div>
                 </div>
+
+                <!-- Recent Projects -->
+                @if($client->projects->isNotEmpty())
+                <div class="space-y-2 mb-4">
+                    <p class="text-sm text-gray-400">Latest Project:</p>
+                    @php
+                        $latestProject = $client->projects->first();  // Ambil project pertama saja
+                    @endphp
+                    <div class="bg-dark-primary rounded-lg p-3 flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-medium">{{ $latestProject->name }}</p>
+                            <p class="text-xs text-gray-400">Rp {{ number_format($latestProject->price, 0, ',', '.') }}</p>
+                        </div>
+                        <span class="px-2 py-1 rounded-full text-xs {{ 
+                            match($latestProject->status) {
+                                'success' => 'bg-green-500/10 text-green-500',
+                                'pending' => 'bg-yellow-500/10 text-yellow-500',
+                                'process' => 'bg-blue-500/10 text-blue-500',
+                                'cancel' => 'bg-red-500/10 text-red-500',
+                                default => 'bg-gray-500/10 text-gray-500'
+                            }
+                        }}">
+                            {{ ucfirst($latestProject->status) }}
+                        </span>
+                    </div>
+                </div>
+                @endif
 
                 <a href="{{ route('admin.clients.show', $client) }}" 
                    class="inline-flex items-center gap-2 text-blue-500 hover:text-blue-400 transition-colors">

@@ -6,22 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
+    public function up()
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('whatsapp');
-            $table->foreignId('project_id')->nullable()->constrained()->onDelete('set null');
-            $table->decimal('salary', 15, 2);
-            $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
-            $table->text('notes')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('teams');
     }

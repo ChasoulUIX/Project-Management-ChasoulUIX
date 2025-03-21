@@ -13,19 +13,20 @@
 
             <!-- Amount -->
             <div class="space-y-2">
-                <label for="amount" class="block text-sm font-medium text-gray-300">
+                <label for="display_amount" class="block text-sm font-medium text-gray-300">
                     Amount (Rp) <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
                     <span class="absolute left-4 top-2.5 text-gray-500">Rp</span>
-                    <input type="number" 
-                           name="amount" 
-                           id="amount" 
-                           value="{{ old('amount') }}"
+                    <input type="text" 
+                           id="display_amount" 
+                           value="{{ old('amount') ? number_format(old('amount'), 0, ',', '.') : '' }}"
                            class="w-full pl-12 pr-4 py-2.5 bg-dark-primary border border-gray-700 rounded-lg 
                                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
                                   text-gray-100 placeholder-gray-500"
-                           placeholder="0">
+                           placeholder="10.000"
+                           oninput="formatAmount(this)">
+                    <input type="hidden" name="amount" id="real_amount" value="{{ old('amount') }}">
                 </div>
                 @error('amount')
                     <p class="text-sm text-red-500">{{ $message }}</p>
@@ -96,4 +97,30 @@
         </form>
     </div>
 </div>
+
+@push('scripts')
+<script>
+function formatAmount(input) {
+    // Hapus semua karakter selain angka
+    let value = input.value.replace(/\D/g, '');
+    
+    // Format dengan pemisah ribuan
+    value = new Intl.NumberFormat('id-ID').format(value);
+    
+    // Update tampilan input
+    input.value = value;
+    
+    // Update nilai sebenarnya untuk dikirim ke server
+    document.getElementById('real_amount').value = value.replace(/\D/g, '');
+}
+
+// Format initial value if exists
+document.addEventListener('DOMContentLoaded', function() {
+    const displayAmount = document.getElementById('display_amount');
+    if (displayAmount.value) {
+        formatAmount(displayAmount);
+    }
+});
+</script>
+@endpush
 @endsection 

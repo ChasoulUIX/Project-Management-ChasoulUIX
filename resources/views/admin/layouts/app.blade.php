@@ -158,6 +158,7 @@
             border-radius: 2px;
         }
     </style>
+    @stack('scripts')
 </head>
 <body class="bg-dark-primary text-gray-100 font-sans">
     <div class="flex min-h-screen">
@@ -302,7 +303,7 @@
                             <span class="text-lg font-semibold">{{ substr(Auth::user()->name, 0, 1) }}</span>
                         </div>
                         <div class="hidden md:block">
-                            <p class="text-sm font-medium">{{ Auth::user()->name }}</p>
+                            <p class="text-sm font-medium">ChasoulUIX</p>
                             <p class="text-xs text-gray-400">Administrator</p>
                         </div>
                         <form method="POST" action="{{ route('admin.logout') }}">

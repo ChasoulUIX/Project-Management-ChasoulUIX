@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Client;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -16,20 +17,31 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $statuses = Project::getStatuses();
-        return view('admin.projects.create', compact('statuses'));
+        $clients = Client::all();
+        $statuses = [
+            'pending' => 'Pending',
+            'process' => 'In Progress',
+            'success' => 'Completed',
+            'cancel' => 'Cancelled'
+        ];
+        
+        return view('admin.projects.create', compact('clients', 'statuses'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'client_id' => 'required|exists:clients,id',
             'price' => 'required|numeric|min:0',
             'notes' => 'nullable|string',
             'status' => 'required|in:pending,process,cancel,success',
         ]);
 
-        Project::create($validated);
+        $project = Project::create($validated);
+
+        $client = Client::find($validated['client_id']);
+        $client->updateLastProject();
 
         return redirect()
             ->route('admin.projects.index')
@@ -38,8 +50,15 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        $statuses = Project::getStatuses();
-        return view('admin.projects.edit', compact('project', 'statuses'));
+        $clients = Client::all();
+        $statuses = [
+            'pending' => 'Pending',
+            'process' => 'In Progress',
+            'success' => 'Completed',
+            'cancel' => 'Cancelled'
+        ];
+        
+        return view('admin.projects.edit', compact('project', 'clients', 'statuses'));
     }
 
     public function update(Request $request, Project $project)

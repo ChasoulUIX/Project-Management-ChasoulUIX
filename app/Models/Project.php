@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    protected $fillable = ['name', 'price', 'notes', 'status'];
+    protected $fillable = [
+        'name',
+        'client_id',
+        'price',
+        'status',
+        'notes',
+    ];
 
     const STATUS_PENDING = 'pending';
     const STATUS_PROCESS = 'process';
@@ -52,5 +58,30 @@ class Project extends Model
     {
         if ($this->price <= 0) return 0;
         return ($this->total_paid / $this->price) * 100;
+    }
+
+    public function teams()
+    {
+        return $this->hasMany(Team::class);
+    }
+
+    public function getTotalTeamSalaryAttribute()
+    {
+        return $this->teams()->where('status', 'paid')->sum('salary');
+    }
+
+    public function getNetProfitAttribute()
+    {
+        return $this->total_paid - $this->total_team_salary;
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function team_members()
+    {
+        return $this->hasMany(Team::class);
     }
 } 

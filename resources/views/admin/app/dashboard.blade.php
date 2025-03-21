@@ -22,7 +22,7 @@
         </div>
 
         <!-- Active Projects -->
-        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-green-500/50 transition-all duration-300">
+        <!-- <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-green-500/50 transition-all duration-300">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
                     <i class="ri-time-line text-2xl text-green-500"></i>
@@ -36,7 +36,7 @@
                 <i class="ri-arrow-right-circle-line"></i>
                 <span class="text-sm">In progress</span>
             </div>
-        </div>
+        </div> -->
 
         <!-- Total Income -->
         <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300">
@@ -56,7 +56,7 @@
         </div>
 
         <!-- Pending Projects -->
-        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-yellow-500/50 transition-all duration-300">
+        <!-- <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-yellow-500/50 transition-all duration-300">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center">
                     <i class="ri-timer-line text-2xl text-yellow-500"></i>
@@ -70,13 +70,47 @@
                 <i class="ri-hourglass-line"></i>
                 <span class="text-sm">Awaiting action</span>
             </div>
+        </div> -->
+
+        <!-- Team Expenses -->
+        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-indigo-500/50 transition-all duration-300">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center">
+                    <i class="ri-team-line text-2xl text-indigo-500"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Team Expenses</p>
+                    <h3 class="text-2xl font-bold">Rp {{ number_format(\App\Models\Team::where('status', 'paid')->sum('salary'), 0, ',', '.') }}</h3>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-indigo-500">
+                <i class="ri-group-line"></i>
+                <span class="text-sm">{{ \App\Models\Team::count() }} team members</span>
+            </div>
+        </div>
+
+        <!-- Total Clients -->
+        <div class="p-6 bg-dark-secondary rounded-2xl border border-gray-700/50 hover:border-pink-500/50 transition-all duration-300">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-pink-500/10 rounded-xl flex items-center justify-center">
+                    <i class="ri-user-star-line text-2xl text-pink-500"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Total Clients</p>
+                    <h3 class="text-2xl font-bold">{{ \App\Models\Client::count() }}</h3>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-pink-500">
+                <i class="ri-group-line"></i>
+                <span class="text-sm">Active clients</span>
+            </div>
         </div>
     </div>
 
-    <!-- Recent Projects -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Projects & Payments Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Latest Projects -->
-        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50">
+        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50 lg:col-span-1">
             <div class="p-6 border-b border-gray-700/50">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-semibold">Latest Projects</h2>
@@ -113,7 +147,7 @@
         </div>
 
         <!-- Recent Payments -->
-        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50">
+        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50 lg:col-span-1">
             <div class="p-6 border-b border-gray-700/50">
                 <h2 class="text-xl font-semibold">Recent Payments</h2>
             </div>
@@ -140,38 +174,115 @@
                 @endforeach
             </div>
         </div>
+
+        <!-- Recent Clients -->
+        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50 lg:col-span-1">
+            <div class="p-6 border-b border-gray-700/50">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-semibold">Recent Clients</h2>
+                    <a href="{{ route('admin.clients.index') }}" 
+                       class="px-4 py-2 bg-pink-500/10 text-pink-500 rounded-lg hover:bg-pink-500/20 transition-colors">
+                        View All
+                    </a>
+                </div>
+            </div>
+            <div class="p-6 space-y-4">
+                @foreach(\App\Models\Client::latest()->take(5)->get() as $client)
+                <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center">
+                            <i class="ri-user-star-line text-pink-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">{{ $client->name }}</h3>
+                            <a href="https://wa.me/{{ $client->formatted_whatsapp }}" 
+                               target="_blank"
+                               class="text-sm text-gray-400 hover:text-green-500 transition-colors inline-flex items-center gap-1">
+                                <i class="ri-whatsapp-line"></i>
+                                {{ $client->whatsapp }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm text-gray-400">
+                            {{ $client->total_projects }} Projects
+                        </span>
+                        <a href="{{ route('admin.clients.show', $client) }}" 
+                           class="p-2 text-gray-400 hover:text-pink-500 transition-colors">
+                            <i class="ri-arrow-right-line"></i>
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     <!-- Project Status Distribution -->
-    <div class="bg-dark-secondary rounded-2xl border border-gray-700/50">
-        <div class="p-6 border-b border-gray-700/50">
-            <h2 class="text-xl font-semibold">Project Status Distribution</h2>
-        </div>
-        <div class="p-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @php
-                    $statuses = [
-                        'pending' => ['icon' => 'ri-timer-line', 'color' => 'yellow'],
-                        'process' => ['icon' => 'ri-time-line', 'color' => 'blue'],
-                        'success' => ['icon' => 'ri-check-line', 'color' => 'green'],
-                        'cancel' => ['icon' => 'ri-close-circle-line', 'color' => 'red']
-                    ];
-                @endphp
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Project Status -->
+        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50">
+            <div class="p-6 border-b border-gray-700/50">
+                <h2 class="text-xl font-semibold">Project Status Distribution</h2>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    @php
+                        $statuses = [
+                            'pending' => ['icon' => 'ri-timer-line', 'color' => 'yellow'],
+                            'process' => ['icon' => 'ri-time-line', 'color' => 'blue'],
+                            'success' => ['icon' => 'ri-check-line', 'color' => 'green'],
+                            'cancel' => ['icon' => 'ri-close-circle-line', 'color' => 'red']
+                        ];
+                    @endphp
 
-                @foreach($statuses as $status => $info)
-                @php
-                    $count = \App\Models\Project::where('status', $status)->count();
-                @endphp
-                <div class="p-4 bg-gray-800/50 rounded-xl">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-{{ $info['color'] }}-500/10 flex items-center justify-center">
-                            <i class="{{ $info['icon'] }} text-{{ $info['color'] }}-500"></i>
+                    @foreach($statuses as $status => $info)
+                    @php
+                        $count = \App\Models\Project::where('status', $status)->count();
+                    @endphp
+                    <div class="p-4 bg-gray-800/50 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-{{ $info['color'] }}-500/10 flex items-center justify-center">
+                                <i class="{{ $info['icon'] }} text-{{ $info['color'] }}-500"></i>
+                            </div>
+                            <span class="text-sm font-medium">{{ ucfirst($status) }}</span>
                         </div>
-                        <span class="text-sm font-medium">{{ ucfirst($status) }}</span>
+                        <p class="text-2xl font-bold mt-2">{{ $count }}</p>
                     </div>
-                    <p class="text-2xl font-bold mt-2">{{ $count }}</p>
+                    @endforeach
                 </div>
-                @endforeach
+            </div>
+        </div>
+
+        <!-- Client Projects Distribution -->
+        <div class="bg-dark-secondary rounded-2xl border border-gray-700/50">
+            <div class="p-6 border-b border-gray-700/50">
+                <h2 class="text-xl font-semibold">Top Clients</h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    @foreach(\App\Models\Client::withCount('projects')->orderByDesc('projects_count')->take(5)->get() as $client)
+                    <div class="p-4 bg-gray-800/50 rounded-xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center">
+                                    <i class="ri-user-star-line text-pink-500"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">{{ $client->name }}</h3>
+                                    <p class="text-sm text-gray-400">{{ $client->projects_count }} Projects</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium text-gray-300">
+                                    Rp {{ number_format($client->total_payments, 0, ',', '.') }}
+                                </p>
+                                <p class="text-sm text-gray-400">Total Value</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>

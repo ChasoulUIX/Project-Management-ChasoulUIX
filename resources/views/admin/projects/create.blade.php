@@ -124,6 +124,30 @@
                 @enderror
             </div>
 
+            <!-- Client -->
+            <div class="space-y-2">
+                <label for="client_id" class="block text-sm font-medium text-gray-300">
+                    Client <span class="text-red-500">*</span>
+                </label>
+                <select name="client_id" 
+                        id="client_id" 
+                        class="w-full px-4 py-2.5 bg-dark-primary border border-gray-700 rounded-lg
+                               focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
+                               text-gray-100"
+                        required>
+                    <option value="">Select Client</option>
+                    @foreach($clients as $client)
+                        <option value="{{ $client->id }}" 
+                                {{ old('client_id') == $client->id ? 'selected' : '' }}>
+                            {{ $client->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('client_id')
+                    <p class="text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Form Actions -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-700/50">
                 <a href="{{ route('admin.projects.index') }}" 

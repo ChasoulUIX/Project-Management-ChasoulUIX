@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\TeamController;
+use App\Http\Controllers\Admin\ClientController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -25,4 +27,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('projects/{project}/payments/create', [PaymentController::class, 'create'])->name('projects.payments.create');
     Route::post('projects/{project}/payments', [PaymentController::class, 'store'])->name('projects.payments.store');
     Route::delete('projects/{project}/payments/{payment}', [PaymentController::class, 'destroy'])->name('projects.payments.destroy');
+    
+    Route::resource('teams', TeamController::class);
+    Route::patch('teams/{team}/mark-as-paid', [TeamController::class, 'markAsPaid'])->name('teams.mark-as-paid');
+    
+    Route::resource('clients', ClientController::class);
 });

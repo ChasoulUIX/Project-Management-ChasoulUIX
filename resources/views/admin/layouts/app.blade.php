@@ -157,6 +157,20 @@
             background: #3B82F6;
             border-radius: 2px;
         }
+
+        /* Dark mode input styles */
+        input[type="text"] {
+            background-color: #1E293B;
+            color: #E5E7EB;
+        }
+
+        input[type="text"]::placeholder {
+            color: #6B7280;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
     </style>
     @stack('scripts')
 </head>

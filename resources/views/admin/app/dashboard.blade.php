@@ -244,7 +244,11 @@
             </div>
             <div class="p-6">
                 <div class="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/50">
-                    @foreach(\App\Models\Client::withCount('projects')->orderByDesc('projects_count')->take(5)->get() as $client)
+                    @foreach(\App\Models\Client::withCount('projects')
+                        ->withSum('projects', 'price')
+                        ->orderByDesc('projects_sum_price')
+                        ->take(5)
+                        ->get() as $client)
                     <div class="p-4 bg-gray-800/50 rounded-xl">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -258,7 +262,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="font-medium text-gray-300">
-                                    Rp {{ number_format($client->total_payments, 0, ',', '.') }}
+                                    Rp {{ number_format($client->projects_sum_price ?? 0, 0, ',', '.') }}
                                 </p>
                                 <p class="text-sm text-gray-400">Total Value</p>
                             </div>

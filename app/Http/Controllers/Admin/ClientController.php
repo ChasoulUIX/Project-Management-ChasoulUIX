@@ -9,12 +9,17 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
+
         $clients = Client::withCount('projects')
-            ->with(['projects' => function($query) {
-                $query->latest()->take(2);
-            }])
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('whatsapp', 'like', '%' . $search . '%');
+                });
+            })
             ->latest()
             ->paginate(9);
 

@@ -87,29 +87,31 @@
                     </a>
                 </div>
             </div>
-            <div class="p-6 space-y-4">
-                @foreach(\App\Models\Project::latest()->take(5)->get() as $project)
-                <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                            <i class="ri-folder-line text-blue-500"></i>
+            <div class="p-6">
+                <div class="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/50">
+                    @foreach(\App\Models\Project::latest()->take(5)->get() as $project)
+                    <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                <i class="ri-folder-line text-blue-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium">{{ $project->name }}</h3>
+                                <p class="text-sm text-gray-400">Rp {{ number_format($project->price, 0, ',', '.') }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-medium">{{ $project->name }}</h3>
-                            <p class="text-sm text-gray-400">Rp {{ number_format($project->price, 0, ',', '.') }}</p>
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full text-xs {{ $project->getStatusColorClass() }}">
+                                {{ ucfirst($project->status) }}
+                            </span>
+                            <a href="{{ route('admin.projects.show', $project) }}" 
+                               class="p-2 text-gray-400 hover:text-blue-500 transition-colors">
+                                <i class="ri-arrow-right-line"></i>
+                            </a>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="px-3 py-1 rounded-full text-xs {{ $project->getStatusColorClass() }}">
-                            {{ ucfirst($project->status) }}
-                        </span>
-                        <a href="{{ route('admin.projects.show', $project) }}" 
-                           class="p-2 text-gray-400 hover:text-blue-500 transition-colors">
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    </div>
+                    @endforeach
                 </div>
-                @endforeach
             </div>
         </div>
 
@@ -118,37 +120,39 @@
             <div class="p-6 border-b border-gray-700/50">
                 <h2 class="text-xl font-semibold">Recent Payments</h2>
             </div>
-            <div class="p-6 space-y-4">
-                @foreach(\App\Models\Payment::with(['project' => function($query) {
-                    $query->where('status', '!=', 'cancel');
-                }])
-                ->whereHas('project', function($query) {
-                    $query->where('status', '!=', 'cancel');
-                })
-                ->latest()
-                ->take(5)
-                ->get() as $payment)
-                    @if($payment->project)
-                    <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                                <i class="ri-money-dollar-circle-line text-green-500"></i>
+            <div class="p-6">
+                <div class="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/50">
+                    @foreach(\App\Models\Payment::with(['project' => function($query) {
+                        $query->where('status', '!=', 'cancel');
+                    }])
+                    ->whereHas('project', function($query) {
+                        $query->where('status', '!=', 'cancel');
+                    })
+                    ->latest()
+                    ->take(5)
+                    ->get() as $payment)
+                        @if($payment->project)
+                        <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                                    <i class="ri-money-dollar-circle-line text-green-500"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">{{ $payment->project->name }}</h3>
+                                    <p class="text-sm text-gray-400">
+                                        {{ $payment->payment_method }} • {{ $payment->payment_date->format('d M Y') }}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-medium">{{ $payment->project->name }}</h3>
-                                <p class="text-sm text-gray-400">
-                                    {{ $payment->payment_method }} • {{ $payment->payment_date->format('d M Y') }}
+                            <div class="text-right">
+                                <p class="font-medium text-green-500">
+                                    Rp {{ number_format($payment->amount, 0, ',', '.') }}
                                 </p>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-medium text-green-500">
-                                Rp {{ number_format($payment->amount, 0, ',', '.') }}
-                            </p>
-                        </div>
-                    </div>
-                    @endif
-                @endforeach
+                        @endif
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -163,34 +167,36 @@
                     </a>
                 </div>
             </div>
-            <div class="p-6 space-y-4">
-                @foreach(\App\Models\Client::latest()->take(5)->get() as $client)
-                <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center">
-                            <i class="ri-user-star-line text-pink-500"></i>
+            <div class="p-6">
+                <div class="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/50">
+                    @foreach(\App\Models\Client::latest()->take(5)->get() as $client)
+                    <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center">
+                                <i class="ri-user-star-line text-pink-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium">{{ $client->name }}</h3>
+                                <a href="https://wa.me/{{ $client->formatted_whatsapp }}" 
+                                   target="_blank"
+                                   class="text-sm text-gray-400 hover:text-green-500 transition-colors inline-flex items-center gap-1">
+                                    <i class="ri-whatsapp-line"></i>
+                                    {{ $client->whatsapp }}
+                                </a>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-medium">{{ $client->name }}</h3>
-                            <a href="https://wa.me/{{ $client->formatted_whatsapp }}" 
-                               target="_blank"
-                               class="text-sm text-gray-400 hover:text-green-500 transition-colors inline-flex items-center gap-1">
-                                <i class="ri-whatsapp-line"></i>
-                                {{ $client->whatsapp }}
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm text-gray-400">
+                                {{ $client->total_projects }} Projects
+                            </span>
+                            <a href="{{ route('admin.clients.show', $client) }}" 
+                               class="p-2 text-gray-400 hover:text-pink-500 transition-colors">
+                                <i class="ri-arrow-right-line"></i>
                             </a>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-sm text-gray-400">
-                            {{ $client->total_projects }} Projects
-                        </span>
-                        <a href="{{ route('admin.clients.show', $client) }}" 
-                           class="p-2 text-gray-400 hover:text-pink-500 transition-colors">
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    </div>
+                    @endforeach
                 </div>
-                @endforeach
             </div>
         </div>
     </div>
@@ -237,7 +243,7 @@
                 <h2 class="text-xl font-semibold">Top Clients</h2>
             </div>
             <div class="p-6">
-                <div class="space-y-4">
+                <div class="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/50">
                     @foreach(\App\Models\Client::withCount('projects')->orderByDesc('projects_count')->take(5)->get() as $client)
                     <div class="p-4 bg-gray-800/50 rounded-xl">
                         <div class="flex items-center justify-between">

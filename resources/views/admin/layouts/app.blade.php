@@ -160,18 +160,41 @@
     </style>
     @stack('scripts')
 </head>
-<body class="bg-dark-primary text-gray-100 font-sans">
+<body class="bg-dark-primary text-gray-100 font-sans" 
+      x-data="{ sidebarOpen: window.innerWidth >= 1024 }" 
+      @resize.window="sidebarOpen = window.innerWidth >= 1024">
     <div class="flex min-h-screen">
+        <!-- Overlay untuk mobile -->
+        <div x-show="sidebarOpen && window.innerWidth < 1024" 
+             x-cloak
+             x-transition:enter="transition-opacity ease-linear duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-linear duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click="sidebarOpen = false"
+             class="fixed inset-0 bg-black/50 lg:hidden z-20">
+        </div>
+
         <!-- Sidebar -->
-        <div class="w-72 fixed h-screen bg-dark-secondary border-r border-gray-700/50 overflow-y-auto sidebar-scroll">
+        <div x-cloak
+             :class="{'translate-x-0': sidebarOpen, '-translate-x-full lg:translate-x-0': !sidebarOpen}"
+             class="w-72 fixed h-screen bg-dark-secondary border-r border-gray-700/50 overflow-y-auto sidebar-scroll z-30 transform transition-transform duration-300 ease-in-out">
             <!-- Logo Area -->
-            <div class="flex items-center gap-2 px-6 h-16 border-b border-gray-700/50">
-                <div class="w-8 h-8 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                    <i class="ri-admin-line text-xl text-white"></i>
+            <div class="flex items-center justify-between gap-2 px-6 h-16 border-b border-gray-700/50">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                        <i class="ri-admin-line text-xl text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
+                        AdminPanel
+                    </span>
                 </div>
-                <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
-                    AdminPanel
-                </span>
+                <!-- Tombol close untuk mobile -->
+                <button @click="sidebarOpen = false" class="lg:hidden p-2 hover:bg-gray-800/50 rounded-lg">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
             </div>
 
             <!-- Navigation -->
@@ -280,11 +303,13 @@
         </div>
 
         <!-- Main Content -->
-        <div class="ml-72 flex-1">
+        <div :class="{'lg:ml-72': sidebarOpen}"
+             class="w-full flex-1 transition-all duration-300 ease-in-out">
             <!-- Top Navigation -->
-            <div class="h-20 flex items-center justify-between px-8 bg-dark-secondary/50 backdrop-blur-xl border-b border-gray-700/50">
+            <div class="h-20 flex items-center justify-between px-8 bg-dark-secondary/50 backdrop-blur-xl border-b border-gray-700/50 sticky top-0 z-10">
                 <div class="flex items-center gap-3">
-                    <button class="p-2 hover:bg-gray-800/50 rounded-lg transition-colors">
+                    <button @click="sidebarOpen = !sidebarOpen" 
+                            class="p-2 hover:bg-gray-800/50 rounded-lg transition-colors lg:hidden">
                         <i class="ri-menu-line text-xl"></i>
                     </button>
                     <h1 class="text-xl font-semibold text-gray-100">Dashboard</h1>
@@ -366,11 +391,24 @@
             background-color: #4B5563;
             border-radius: 2px;
         }
+
+        @media (max-width: 1024px) {
+            .sidebar-scroll {
+                will-change: transform;
+            }
+        }
+
+        .transform {
+            will-change: transform;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get current route
             const currentRoute = '{{ request()->route()->getName() }}';
             
             // Find and add active class to current menu item
@@ -380,7 +418,13 @@
                     item.classList.add('active');
                 }
             });
+
+            // Prevent transition on page load
+            window.addEventListener('load', function() {
+                document.body.classList.add('ready');
+            });
         });
     </script>
 </body>
 </html>
+

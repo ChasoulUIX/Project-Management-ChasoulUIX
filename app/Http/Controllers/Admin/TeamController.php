@@ -12,7 +12,12 @@ class TeamController extends Controller
 {
     public function index()
     {
-        $teams = Team::with('projects')->latest()->paginate(9);
+        $teams = Team::with(['projects' => function($query) {
+            $query->orderBy('project_team.created_at', 'desc'); // Urutkan berdasarkan tanggal join project
+        }])
+        ->latest()  // Team terbaru di atas
+        ->paginate(9);
+
         $totalPaidSalary = DB::table('project_team')->where('status', 'paid')->sum('salary');
         $totalUnpaidSalary = DB::table('project_team')->where('status', 'unpaid')->sum('salary');
 

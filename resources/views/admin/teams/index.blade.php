@@ -84,7 +84,7 @@
 
                 <!-- Projects List -->
                 <div class="space-y-3">
-                    @foreach($team->projects as $project)
+                    @foreach($team->projects->take(3) as $project)
                     <div class="bg-dark-primary rounded-lg p-3">
                         <div class="flex justify-between items-start mb-2">
                             <p class="text-sm font-medium">{{ $project->name }}</p>
@@ -110,6 +110,15 @@
                         @endif
                     </div>
                     @endforeach
+
+                    @if($team->projects->count() > 3)
+                        <div class="text-center pt-2">
+                            <a href="{{ route('admin.teams.show', $team) }}" 
+                               class="text-xs text-gray-400 hover:text-blue-500 transition-colors">
+                                +{{ $team->projects->count() - 3 }} more projects
+                            </a>
+                        </div>
+                    @endif
                 </div>
 
                 <a href="{{ route('admin.teams.show', $team) }}" 

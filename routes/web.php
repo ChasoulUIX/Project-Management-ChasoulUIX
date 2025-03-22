@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Users\ProjectController as UserProjectController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -38,3 +39,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     
     Route::resource('clients', ClientController::class);
 });
+
+Route::get('/projects/check', [UserProjectController::class, 'check'])->name('users.projects.check');
+Route::get('/projects/search', [UserProjectController::class, 'search'])->name('users.projects.search');

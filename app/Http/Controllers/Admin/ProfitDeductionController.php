@@ -17,13 +17,13 @@ class ProfitDeductionController extends Controller
 
     public function create()
     {
-        return view('admin.profit-deductions.create');
+        return view('admin.profit-deductions.create');                                                                                                                                                                                                                                                                                                  
     }
 
-    public function store(Request $request)
+    public function store(Request $request)                                                                                                     
     {
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0',                                                                   
             'description' => 'required|string|max:255',
             'deduction_date' => 'required|date'
         ]);

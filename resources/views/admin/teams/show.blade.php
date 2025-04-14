@@ -67,23 +67,23 @@
                 <div>
                     <h4 class="font-medium">{{ $project->name }}</h4>
                     <p class="text-sm text-gray-400 mt-1">Salary: Rp {{ number_format($project->pivot->salary, 0, ',', '.') }}</p>
+                    @if($project->pivot->amount_paid > 0)
+                    <p class="text-sm text-gray-400 mt-1">
+                        Paid: Rp {{ number_format($project->pivot->amount_paid, 0, ',', '.') }}
+                        <span class="text-xs">({{ number_format(($project->pivot->amount_paid / $project->pivot->salary) * 100, 1) }}%)</span>
+                    </p>
+                    @endif
                 </div>
                 <div class="flex items-center gap-4">
                     <span class="px-3 py-1 rounded-full text-sm {{ $project->pivot->status === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500' }}">
                         {{ ucfirst($project->pivot->status) }}
                     </span>
                     @if($project->pivot->status === 'unpaid')
-                    <form action="{{ route('admin.teams.mark-project-as-paid', ['team' => $team, 'project' => $project]) }}" 
-                          method="POST"
-                          class="inline-block">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" 
-                                class="px-3 py-1 bg-green-500/10 text-green-500 rounded-lg hover:bg-green-500/20 transition-colors">
-                            <i class="ri-checkbox-circle-line mr-1"></i>
-                            Mark as Paid
-                        </button>
-                    </form>
+                    <a href="{{ route('admin.teams.show-payment-form', ['team' => $team, 'project' => $project]) }}" 
+                       class="px-3 py-1 bg-green-500/10 text-green-500 rounded-lg hover:bg-green-500/20 transition-colors">
+                        <i class="ri-money-dollar-circle-line mr-1"></i>
+                        Add Payment
+                    </a>
                     @endif
                 </div>
             </div>

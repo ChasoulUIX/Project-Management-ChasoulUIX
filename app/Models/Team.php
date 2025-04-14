@@ -23,7 +23,7 @@ class Team extends Model
     public function projects()
     {
         return $this->belongsToMany(Project::class)
-                    ->withPivot('salary', 'status', 'payment_date')
+                    ->withPivot('salary', 'status', 'payment_date', 'amount_paid', 'notes')
                     ->withTimestamps();
     }
 

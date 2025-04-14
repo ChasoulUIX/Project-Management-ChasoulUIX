@@ -18,8 +18,11 @@ class TeamController extends Controller
         ->latest()  // Team terbaru di atas
         ->paginate(9);
 
-        $totalPaidSalary = DB::table('project_team')->where('status', 'paid')->sum('salary');
-        $totalUnpaidSalary = DB::table('project_team')->where('status', 'unpaid')->sum('salary');
+        // Hitung total berdasarkan amount_paid
+        $totalPaidSalary = DB::table('project_team')->sum('amount_paid');
+        $totalUnpaidSalary = DB::table('project_team')
+            ->selectRaw('SUM(CASE WHEN amount_paid >= salary THEN 0 ELSE salary - COALESCE(amount_paid, 0) END) as total_unpaid')
+            ->value('total_unpaid');
 
         return view('admin.teams.index', compact('teams', 'totalPaidSalary', 'totalUnpaidSalary'));
     }
@@ -113,10 +116,12 @@ class TeamController extends Controller
     {
         $team->load('projects');
         
-        // Hitung total salary
+        // Hitung total berdasarkan amount_paid
         $totalSalary = $team->projects->sum('pivot.salary');
-        $totalPaidSalary = $team->projects->where('pivot.status', 'paid')->sum('pivot.salary');
-        $totalUnpaidSalary = $team->projects->where('pivot.status', 'unpaid')->sum('pivot.salary');
+        $totalPaidSalary = $team->projects->sum('pivot.amount_paid');
+        $totalUnpaidSalary = $team->projects->sum(function ($project) {
+            return max(0, $project->pivot->salary - ($project->pivot->amount_paid ?? 0));
+        });
 
         // Ambil project yang belum ditambahkan ke team
         $availableProjects = Project::whereNotIn('id', $team->projects->pluck('id'))->get();
@@ -180,5 +185,57 @@ class TeamController extends Controller
         ]);
 
         return back()->with('success', 'Project has been marked as paid.');
+    }
+
+    public function recordPayment(Request $request, Team $team, Project $project)
+    {
+        if (!$team->projects->contains($project->id)) {
+            return back()->with('error', 'Project not found for this team member.');
+        }
+
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'payment_date' => 'required|date',
+            'notes' => 'nullable|string',
+        ]);
+
+        // Ambil data project team saat ini
+        $projectTeam = $team->projects()->find($project->id);
+        $currentAmountPaid = $projectTeam->pivot->amount_paid ?? 0;
+        $totalAmountPaid = $currentAmountPaid + $validated['amount'];
+
+        // Update pembayaran
+        $updateData = [
+            'amount_paid' => $totalAmountPaid,
+            'payment_date' => $validated['payment_date'],
+            'notes' => $validated['notes']
+        ];
+
+        // Jika total pembayaran sudah mencapai atau melebihi salary, update status menjadi paid
+        if ($totalAmountPaid >= $projectTeam->pivot->salary) {
+            $updateData['status'] = 'paid';
+        }
+
+        // Update data project team
+        $team->projects()->updateExistingPivot($project->id, $updateData);
+
+        $message = 'Payment recorded successfully.';
+        if ($updateData['status'] ?? null === 'paid') {
+            $message .= ' Project has been marked as paid.';
+        }
+
+        return redirect()
+            ->route('admin.teams.show', $team)
+            ->with('success', $message);
+    }
+
+    public function showPaymentForm(Team $team, Project $project)
+    {
+        if (!$team->projects->contains($project->id)) {
+            return back()->with('error', 'Project not found for this team member.');
+        }
+
+        $project = $team->projects()->find($project->id);
+        return view('admin.teams.payment-form', compact('team', 'project'));
     }
 } 

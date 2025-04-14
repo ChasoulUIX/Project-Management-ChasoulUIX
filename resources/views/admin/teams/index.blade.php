@@ -92,7 +92,13 @@
                                 {{ ucfirst($project->pivot->status) }}
                             </span>
                         </div>
-                        <p class="text-sm text-gray-400">Rp {{ number_format($project->pivot->salary, 0, ',', '.') }}</p>
+                        <p class="text-sm text-gray-400">
+                            @if($project->pivot->status === 'paid')
+                                Paid: Rp {{ number_format($project->pivot->amount_paid, 0, ',', '.') }}
+                            @else
+                                Salary: Rp {{ number_format($project->pivot->salary, 0, ',', '.') }}
+                            @endif
+                        </p>
                         @if($project->pivot->status === 'unpaid')
                         <form action="{{ route('admin.teams.update-payment-status', ['team' => $team, 'project' => $project]) }}" 
                               method="POST" 

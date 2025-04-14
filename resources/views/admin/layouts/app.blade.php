@@ -279,11 +279,17 @@
                     </div>
 
                     <!-- Finance Section -->
-                    <!-- <div class="space-y-2">
+                    <div class="space-y-2">
                         <p class="section-title text-xs font-semibold text-gray-400 uppercase mb-2">
                             FINANCE
                         </p>
                         
+                        <a href="{{ route('admin.profit-deductions.index') }}" 
+                           class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300">
+                            <i class="menu-icon ri-subtract-line text-xl"></i>
+                            <span class="menu-text">Profit Deductions</span>
+                        </a>
+
                         <a href="{{ route('admin.projects.index') }}?filter=payments" 
                            class="menu-item flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300">
                             <i class="menu-icon ri-money-dollar-circle-line text-xl"></i>
@@ -295,9 +301,7 @@
                             <i class="menu-icon ri-wallet-line text-xl"></i>
                             <span class="menu-text">Team Payments</span>
                         </a>
-                    </div> -->
-
-                 
+                    </div>
 
                     <!-- Settings Section -->
                     <div class="space-y-2">

@@ -221,6 +221,7 @@
 
                     @foreach($statuses as $status => $info)
                     @php
+                        // Hitung project berdasarkan status (otomatis exclude soft deleted)
                         $count = \App\Models\Project::where('status', $status)->count();
                     @endphp
                     <div class="p-4 bg-gray-800/50 rounded-xl">

@@ -8,7 +8,7 @@
             <p class="text-gray-400 mt-1">Record new payment for {{ $project->name }}</p>
         </div>
 
-        <form action="{{ route('admin.projects.payments.store', $project) }}" method="POST" class="p-6 space-y-6">
+        <form action="{{ route('admin.projects.payments.store', $project) }}" method="POST" class="p-6 space-y-6" onsubmit="return validateForm()">
             @csrf
 
             <!-- Amount -->
@@ -102,16 +102,35 @@
 <script>
 function formatAmount(input) {
     // Hapus semua karakter selain angka
-    let value = input.value.replace(/\D/g, '');
+    let rawValue = input.value.replace(/\D/g, '');
     
-    // Format dengan pemisah ribuan
-    value = new Intl.NumberFormat('id-ID').format(value);
+    // Update nilai sebenarnya untuk dikirim ke server (SEBELUM format)
+    document.getElementById('real_amount').value = rawValue;
+    
+    // Format dengan pemisah ribuan untuk tampilan
+    let formattedValue = new Intl.NumberFormat('id-ID').format(rawValue);
     
     // Update tampilan input
-    input.value = value;
+    input.value = formattedValue;
+}
+
+function validateForm() {
+    // Pastikan hidden input terisi sebelum submit
+    const displayAmount = document.getElementById('display_amount');
+    const realAmount = document.getElementById('real_amount');
     
-    // Update nilai sebenarnya untuk dikirim ke server
-    document.getElementById('real_amount').value = value.replace(/\D/g, '');
+    // Update real_amount dari display_amount sebelum submit
+    if (displayAmount.value) {
+        realAmount.value = displayAmount.value.replace(/\D/g, '');
+    }
+    
+    // Validasi amount tidak boleh kosong
+    if (!realAmount.value || realAmount.value === '0') {
+        alert('Please enter a valid amount');
+        return false;
+    }
+    
+    return true;
 }
 
 // Format initial value if exists

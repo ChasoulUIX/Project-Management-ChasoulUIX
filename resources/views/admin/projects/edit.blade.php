@@ -44,19 +44,23 @@
 
             <!-- Price -->
             <div class="space-y-2">
-                <label for="price" class="block text-sm font-medium text-gray-300">
+                <label for="display_price" class="block text-sm font-medium text-gray-300">
                     Price (Rp) <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
                     <span class="absolute left-4 top-2.5 text-gray-500">Rp</span>
-                    <input type="number" 
-                           name="price" 
-                           id="price" 
-                           value="{{ old('price', $project->price) }}"
+                    <input type="text" 
+                           id="display_price" 
+                           value="{{ old('price', number_format($project->price, 0, ',', '.')) }}"
                            class="w-full pl-12 pr-4 py-2.5 bg-dark-primary border border-gray-700 rounded-lg 
                                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
                                   text-gray-100 placeholder-gray-500"
-                           placeholder="0">
+                           placeholder="0"
+                           oninput="formatPrice(this)">
+                    <input type="hidden" name="price" id="real_price" value="{{ old('price', $project->price) }}">
+                    <span class="absolute right-3 top-2.5 text-gray-500">
+                        <i class="ri-money-dollar-circle-line"></i>
+                    </span>
                 </div>
                 @error('price')
                     <p class="text-sm text-red-500">{{ $message }}</p>
@@ -163,4 +167,22 @@
     {{ session('success') }}
 </div>
 @endif
+
+@push('scripts')
+<script>
+function formatPrice(input) {
+    // Hapus semua karakter selain angka
+    let rawValue = input.value.replace(/\D/g, '');
+    
+    // Update nilai sebenarnya untuk dikirim ke server (SEBELUM format)
+    document.getElementById('real_price').value = rawValue;
+    
+    // Format dengan pemisah ribuan untuk tampilan
+    let formattedValue = new Intl.NumberFormat('id-ID').format(rawValue);
+    
+    // Update tampilan input
+    input.value = formattedValue;
+}
+</script>
+@endpush
 @endsection 

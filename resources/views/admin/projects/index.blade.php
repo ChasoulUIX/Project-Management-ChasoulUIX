@@ -157,13 +157,14 @@
 </table>
         </div>
         
-        <!-- Pagination -->
-        <div class="p-4" x-show="search === '' && status === ''">
-            {{ $projects->links() }}
-        </div>
         <!-- Message when filtering with no results -->
-        <div class="p-4 text-center text-gray-400" x-show="filteredProjects.length === 0 && (search !== '' || status !== '')">
+        <div class="p-4 text-center text-gray-400" x-show="filteredProjects.length === 0">
             No projects found matching your filters.
+        </div>
+        
+        <!-- Total Results -->
+        <div class="p-4 border-t border-gray-700/50 text-sm text-gray-400">
+            Showing <span x-text="filteredProjects.length"></span> of <span x-text="projects.length"></span> projects
         </div>
     </div>
 </div>

@@ -11,7 +11,8 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::latest()->paginate(20);
+        // Ambil semua project untuk client-side filtering dengan Alpine.js
+        $projects = Project::latest()->get();
         return view('admin.projects.index', compact('projects'));
     }
 

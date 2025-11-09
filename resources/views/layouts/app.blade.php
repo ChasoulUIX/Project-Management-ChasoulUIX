@@ -3,83 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project History Check</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Project Management - ChasoulUIX')</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Remix Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'dark-primary': '#1a1b1e',
-                        'dark-secondary': '#25262b',
-                    },
-                    animation: {
-                        'gradient': 'gradient 8s linear infinite',
-                    },
-                    keyframes: {
-                        gradient: {
-                            '0%, 100%': {
-                                'background-size': '200% 200%',
-                                'background-position': 'left center'
-                            },
-                            '50%': {
-                                'background-size': '200% 200%',
-                                'background-position': 'right center'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(31, 41, 55, 0.5);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(75, 85, 99);
-            border-radius: 3px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(107, 114, 128);
-        }
-
-        /* Gradient Animation */
-        .animate-gradient {
-            background: linear-gradient(
-                270deg,
-                #3b82f6,
-                #8b5cf6,
-                #3b82f6
-            );
-            background-size: 200% 200%;
-            animation: gradient 8s linear infinite;
-        }
-
-        .glass-effect {
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-    </style>
+    <!-- Vite Assets (TailwindCSS & JS) -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    @stack('styles')
 </head>
 <body class="bg-dark-primary text-gray-100 min-h-screen">
     <!-- Background Elements -->
@@ -135,20 +73,6 @@
         </div>
     </footer> -->
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Optional: Add page transition -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.classList.add('opacity-0');
-            setTimeout(() => {
-                document.body.classList.remove('opacity-0');
-                document.body.classList.add('transition-opacity', 'duration-500', 'opacity-100');
-            }, 0);
-        });
-    </script>
+    @stack('scripts')
 </body>
 </html> 

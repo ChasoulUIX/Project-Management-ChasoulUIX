@@ -3,176 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tambahkan Font -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Admin Dashboard - ChasoulUIX')</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tambahkan Icons -->
+    
+    <!-- Remix Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css">
     
+    <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        dark: {
-                            'primary': '#0F172A',
-                            'secondary': '#1E293B',
-                            'accent': '#334155'
-                        }
-                    },
-                    animation: {
-                        'gradient': 'gradient 8s linear infinite',
-                    },
-                    keyframes: {
-                        gradient: {
-                            '0%, 100%': {
-                                'background-size': '200% 200%',
-                                'background-position': 'left center'
-                            },
-                            '50%': {
-                                'background-size': '200% 200%',
-                                'background-position': 'right center'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .nav-link {
-            position: relative;
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 0;
-            background: #3b82f6;
-            border-radius: 0 4px 4px 0;
-            transition: all 0.3s ease;
-            opacity: 0;
-        }
-
-        .nav-link.active::after {
-            height: 70%;
-            opacity: 1;
-        }
-
-        .nav-link:hover::after {
-            height: 70%;
-            opacity: 1;
-        }
-
-        /* Animasi untuk konten menu */
-        .nav-link .nav-content {
-            transition: transform 0.3s ease;
-        }
-
-        .nav-link:hover .nav-content {
-            transform: translateX(4px);
-        }
-
-        .nav-link.active .nav-content {
-            transform: translateX(4px);
-        }
-
-        .sidebar-menu {
-            position: relative;
-        }
-
-        .menu-item {
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .menu-item::before {
-            content: '';
-            position: absolute;
-            left: -10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 0;
-            background: #3B82F6;
-            border-radius: 0 4px 4px 0;
-            transition: all 0.3s ease;
-        }
-
-        .menu-item:hover::before,
-        .menu-item.active::before {
-            height: 80%;
-        }
-
-        .menu-item:hover,
-        .menu-item.active {
-            background: rgba(59, 130, 246, 0.1);
-            transform: translateX(10px);
-        }
-
-        .menu-icon {
-            transition: all 0.3s ease;
-        }
-
-        .menu-item:hover .menu-icon,
-        .menu-item.active .menu-icon {
-            color: #3B82F6;
-            transform: scale(1.1);
-        }
-
-        .menu-text {
-            transition: all 0.3s ease;
-        }
-
-        .menu-item:hover .menu-text,
-        .menu-item.active .menu-text {
-            color: #3B82F6;
-            transform: translateX(4px);
-        }
-
-        .section-title {
-            position: relative;
-            padding-left: 12px;
-        }
-
-        .section-title::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 12px;
-            background: #3B82F6;
-            border-radius: 2px;
-        }
-
-        /* Dark mode input styles */
-        input[type="text"] {
-            background-color: #1E293B;
-            color: #E5E7EB;
-        }
-
-        input[type="text"]::placeholder {
-            color: #6B7280;
-        }
-
-        input[type="text"]:focus {
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-        }
-    </style>
-    @stack('scripts')
+    <!-- Vite Assets (TailwindCSS & JS) -->
+    @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
+    
+    @stack('styles')
 </head>
 <body class="bg-dark-primary text-gray-100 font-sans" 
       x-data="{ sidebarOpen: window.innerWidth >= 1024 }" 

@@ -15,7 +15,7 @@ class ProjectController extends Controller
         return view('admin.projects.index', compact('projects'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $clients = Client::all();
         $statuses = [
@@ -25,7 +25,10 @@ class ProjectController extends Controller
             'cancel' => 'Cancelled'
         ];
         
-        return view('admin.projects.create', compact('clients', 'statuses'));
+        // Get client_id from query parameter if exists
+        $selectedClientId = $request->query('client_id');
+        
+        return view('admin.projects.create', compact('clients', 'statuses', 'selectedClientId'));
     }
 
     public function store(Request $request)

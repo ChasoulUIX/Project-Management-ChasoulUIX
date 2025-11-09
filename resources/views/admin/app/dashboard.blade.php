@@ -208,30 +208,38 @@
             <div class="p-6 border-b border-gray-700/50">
                 <h2 class="text-xl font-semibold">Project Status Distribution</h2>
             </div>
-            <div class="p-6">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    @php
-                        $statuses = [
-                            'pending' => ['icon' => 'ri-timer-line', 'color' => 'yellow'],
-                            'process' => ['icon' => 'ri-time-line', 'color' => 'blue'],
-                            'success' => ['icon' => 'ri-check-line', 'color' => 'green'],
-                            'cancel' => ['icon' => 'ri-close-circle-line', 'color' => 'red']
-                        ];
-                    @endphp
-
-                    @foreach($statuses as $status => $info)
-                    @php
-                        // Hitung project berdasarkan status (otomatis exclude soft deleted)
+            <div class="p-22">
+                @php
+                    $statuses = [
+                        'pending' => ['icon' => 'ri-timer-line', 'color' => 'yellow', 'label' => 'Pending'],
+                        'process' => ['icon' => 'ri-time-line', 'color' => 'blue', 'label' => 'Process'],
+                        'success' => ['icon' => 'ri-check-line', 'color' => 'green', 'label' => 'Success'],
+                        'cancel' => ['icon' => 'ri-close-circle-line', 'color' => 'red', 'label' => 'Cancel']
+                    ];
+                    
+                    $statusCounts = [];
+                    $totalProjects = 0;
+                    foreach($statuses as $status => $info) {
                         $count = \App\Models\Project::where('status', $status)->count();
-                    @endphp
-                    <div class="p-4 bg-gray-800/50 rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-{{ $info['color'] }}-500/10 flex items-center justify-center">
-                                <i class="{{ $info['icon'] }} text-{{ $info['color'] }}-500"></i>
-                            </div>
-                            <span class="text-sm font-medium">{{ ucfirst($status) }}</span>
+                        $statusCounts[$status] = $count;
+                        $totalProjects += $count;
+                    }
+                @endphp
+
+                <!-- Chart Container -->
+                <div class="mb-6">
+                    <canvas id="statusChart" height="200"></canvas>
+                </div>
+
+                <!-- Legend -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    @foreach($statuses as $status => $info)
+                    <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-{{ $info['color'] }}-500"></div>
+                            <span class="text-sm text-gray-300">{{ $info['label'] }}</span>
                         </div>
-                        <p class="text-2xl font-bold mt-2">{{ $count }}</p>
+                        <span class="text-lg font-bold">{{ $statusCounts[$status] }}</span>
                     </div>
                     @endforeach
                 </div>
@@ -275,4 +283,67 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Project Status Chart
+    const ctx = document.getElementById('statusChart');
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Process', 'Success', 'Cancel'],
+            datasets: [{
+                data: [
+                    {{ $statusCounts['pending'] }},
+                    {{ $statusCounts['process'] }},
+                    {{ $statusCounts['success'] }},
+                    {{ $statusCounts['cancel'] }}
+                ],
+                backgroundColor: [
+                    'rgba(234, 179, 8, 0.8)',   // Yellow for Pending
+                    'rgba(59, 130, 246, 0.8)',  // Blue for Process
+                    'rgba(34, 197, 94, 0.8)',   // Green for Success
+                    'rgba(239, 68, 68, 0.8)'    // Red for Cancel
+                ],
+                borderColor: [
+                    'rgba(234, 179, 8, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(34, 197, 94, 1)',
+                    'rgba(239, 68, 68, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#374151',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = {{ $totalProjects }};
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return label + ': ' + value + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+@endpush
 @endsection

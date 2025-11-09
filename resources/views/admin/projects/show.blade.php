@@ -4,7 +4,7 @@
 <div class="max-w-4xl mx-auto space-y-6">
     <!-- Back Button -->
     <div>
-        <a href="{{ route('admin.projects.index') }}" 
+        <a href="javascript:history.back()" 
            class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
             <i class="ri-arrow-left-line"></i>
             <span>Back to Projects</span>
@@ -58,10 +58,17 @@
         <div class="p-6">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-semibold text-white">Payment History</h3>
-                <a href="{{ route('admin.projects.payments.create', $project) }}"
-                   class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                    <i class="ri-add-line mr-1"></i> Add Payment
-                </a>
+                <div class="flex gap-2">
+                    <a href="{{ route('admin.projects.payment-report', $project) }}"
+                       target="_blank"
+                       class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                        <i class="ri-printer-line mr-1"></i> Print PDF
+                    </a>
+                    <a href="{{ route('admin.projects.payments.create', $project) }}"
+                       class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="ri-add-line mr-1"></i> Add Payment
+                    </a>
+                </div>
             </div>
 
             @if($payments->count() > 0)

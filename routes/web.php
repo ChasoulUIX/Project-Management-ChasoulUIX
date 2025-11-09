@@ -25,6 +25,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     Route::resource('projects', ProjectController::class);
+    Route::get('projects/{project}/payment-report', [ProjectController::class, 'paymentReport'])->name('projects.payment-report');
     Route::get('projects/{project}/payments/create', [PaymentController::class, 'create'])->name('projects.payments.create');
     Route::post('projects/{project}/payments', [PaymentController::class, 'store'])->name('projects.payments.store');
     Route::delete('projects/{project}/payments/{payment}', [PaymentController::class, 'destroy'])->name('projects.payments.destroy');

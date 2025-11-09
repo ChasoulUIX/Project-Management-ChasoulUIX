@@ -95,4 +95,12 @@ class ProjectController extends Controller
         $payments = $project->payments()->latest()->get();
         return view('admin.projects.show', compact('project', 'payments'));
     }
+
+    public function paymentReport(Project $project)
+    {
+        $payments = $project->payments()->orderBy('payment_date')->get();
+        $client = $project->client;
+        
+        return view('admin.projects.payment-report', compact('project', 'payments', 'client'));
+    }
 } 

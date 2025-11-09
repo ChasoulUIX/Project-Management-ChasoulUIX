@@ -4,7 +4,7 @@
 <div class="max-w-2xl mx-auto space-y-6">
     <!-- Back Button -->
     <div>
-        <a href="{{ route('admin.projects.index') }}" 
+        <a href="javascript:history.back()" 
            class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
             <i class="ri-arrow-left-line"></i>
             <span>Back to Projects</span>
@@ -119,7 +119,7 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-700/50">
                 <button type="button" 
-                        onclick="window.location='{{ route('admin.projects.index') }}'"
+                        onclick="history.back()"
                         class="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 
                                transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">
                     Cancel
